@@ -4,12 +4,14 @@ import bcrypt from "bcrypt";
 import userModel from "../../db/models/userModel.js";
 import { handleError } from "../../utilities/handleError.js";
 import jwt from "jsonwebtoken";
+import { sender } from "../../services/sendEmail.js";
 
 export const handlRegister = handleAsync(async (req, res, next) => {
   const { firstName, SurName, gender, email, password, birthDate } = req.body;
   const name = `${firstName} ${SurName}`;
   const nandoId = customAlphabet("0123456789", 5);
   const randomNumbers = nandoId();
+  sender(email, randomNumbers);
 
   const hashedPassword = await bcrypt.hash(password, +process.env.SLATROUNDS);
 
@@ -30,7 +32,7 @@ export const handlRegister = handleAsync(async (req, res, next) => {
   res.json({
     message: "welocme Ahmed",
 
-    data: userData,
+    data: {email:email,code:randomNumbers},
   });
 });
 
@@ -75,6 +77,7 @@ export const handleResendEmail = handleAsync(async (req, res, next) => {
   const { email } = req.body;
   const nandoId = customAlphabet("0123456789", 5);
   const randomNumbers = nandoId();
+  sender(email, randomNumbers);
   const emailExsit = await userModel.findOneAndUpdate(
     { email },
     { verificationCode: randomNumbers }
