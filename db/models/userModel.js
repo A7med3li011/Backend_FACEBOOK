@@ -10,6 +10,19 @@ const userSchema = new Schema({
     required: true,
     unique: true,
   },
+  work: {
+    type: String,
+  },
+  live: {
+    type: String,
+  },
+  Studied: {
+    type: String,
+  },
+  from: {
+    type: String,
+  },
+
   birthOfDate: {
     type: Date,
     required: true,
@@ -20,7 +33,6 @@ const userSchema = new Schema({
   },
   bio: {
     type: String,
-    
   },
   profilePic: {
     secure_url: String,
@@ -43,16 +55,15 @@ const userSchema = new Schema({
       ref: "Post",
     },
   ],
-  verified:{
-    type:Boolean,
-    default:false
+  verified: {
+    type: Boolean,
+    default: false,
   },
-  verificationCode:{
-    type:String,
-   
-  }
+  verificationCode: {
+    type: String,
+  },
 });
 
-const  userModel = model("User",userSchema)
+const userModel = model("User", userSchema);
 
-export default userModel
+export default userModel;

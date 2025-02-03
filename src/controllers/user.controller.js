@@ -32,7 +32,7 @@ export const handlRegister = handleAsync(async (req, res, next) => {
   res.json({
     message: "welocme Ahmed",
 
-    data: {email:email,code:randomNumbers},
+    data: { email: email, code: randomNumbers },
   });
 });
 
@@ -86,4 +86,16 @@ export const handleResendEmail = handleAsync(async (req, res, next) => {
   if (!emailExsit) return next(new handleError("email not exist", 404));
 
   res.json({ message: "ressended" });
+});
+
+export const handleDetials = handleAsync(async (req, res, next) => {
+  const { work, live, Studied, from } = req.body;
+  
+
+  await userModel.findOneAndUpdate(
+    { _id: req.user._id },
+    { work, live, Studied, from }
+  );
+
+  res.status(200).json({ message: "updated successfully" });
 });
