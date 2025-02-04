@@ -114,7 +114,10 @@ export const handleGetUser = handleAsync(async (req, res, next) => {
 
 export const handleProfilePic = handleAsync(async (req, res, next) => {
   const image = req.files[0];
-  console.log(image);
+
+  const userExist = await userModel.findById(req.user._id);
+
+  if (!userExist) return next(new handleError("user not found", 404));
   const { public_id, secure_url } = await cloudinary.uploader.upload(
     image.path,
     {
@@ -122,7 +125,7 @@ export const handleProfilePic = handleAsync(async (req, res, next) => {
     }
   );
 
-  const user = await userModel.findOneAndUpdate(
+  await userModel.findOneAndUpdate(
     { _id: req.user._id },
     {
       profilePic: { public_id, secure_url },
@@ -131,11 +134,12 @@ export const handleProfilePic = handleAsync(async (req, res, next) => {
     }
   );
 
-  res.status(200).json({ message: "done", user: user });
+  res.status(200).json({ message: "done" });
 });
 export const handlecoverPic = handleAsync(async (req, res, next) => {
   const image = req.files[0];
-  console.log(image);
+  const userExist = await userModel.findById(req.user._id);
+  if (!userExist) return next(new handleError("user not found", 404));
   const { public_id, secure_url } = await cloudinary.uploader.upload(
     image.path,
     {
@@ -143,7 +147,7 @@ export const handlecoverPic = handleAsync(async (req, res, next) => {
     }
   );
 
-  const user = await userModel.findOneAndUpdate(
+  await userModel.findOneAndUpdate(
     { _id: req.user._id },
     {
       coverPic: { public_id, secure_url },
