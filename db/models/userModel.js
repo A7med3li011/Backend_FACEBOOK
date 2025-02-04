@@ -62,6 +62,7 @@ const userSchema = new Schema({
   verificationCode: {
     type: String,
   },
+  allImages: [{ secure_url: String, public_id: String }],
 });
 
 const userModel = model("User", userSchema);

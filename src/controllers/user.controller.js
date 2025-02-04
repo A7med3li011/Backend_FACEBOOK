@@ -5,6 +5,7 @@ import userModel from "../../db/models/userModel.js";
 import { handleError } from "../../utilities/handleError.js";
 import jwt from "jsonwebtoken";
 import { sender } from "../../services/sendEmail.js";
+import cloudinary from "../../services/cloudinary.js";
 
 export const handlRegister = handleAsync(async (req, res, next) => {
   const { firstName, SurName, gender, email, password, birthDate } = req.body;
@@ -109,4 +110,47 @@ export const handleGetUser = handleAsync(async (req, res, next) => {
   if (!userExist) return next(new handleError("user is not exsit", 404));
 
   res.status(200).json({ message: "seccess", user: userExist });
+});
+
+export const handleProfilePic = handleAsync(async (req, res, next) => {
+  const image = req.files[0];
+  console.log(image);
+  const { public_id, secure_url } = await cloudinary.uploader.upload(
+    image.path,
+    {
+      folder: `FaceBook/User/PrfilePic/${Math.random()}`,
+    }
+  );
+
+  const user = await userModel.findOneAndUpdate(
+    { _id: req.user._id },
+    {
+      profilePic: { public_id, secure_url },
+
+      $push: { allImages: { public_id, secure_url } },
+    }
+  );
+
+  res.status(200).json({ message: "done", user: user });
+});
+export const handlecoverPic = handleAsync(async (req, res, next) => {
+  const image = req.files[0];
+  console.log(image);
+  const { public_id, secure_url } = await cloudinary.uploader.upload(
+    image.path,
+    {
+      folder: `FaceBook/User/PrfilePic/${Math.random()}`,
+    }
+  );
+
+  const user = await userModel.findOneAndUpdate(
+    { _id: req.user._id },
+    {
+      coverPic: { public_id, secure_url },
+
+      $push: { allImages: { public_id, secure_url } },
+    }
+  );
+
+  res.status(200).json({ message: "done" });
 });

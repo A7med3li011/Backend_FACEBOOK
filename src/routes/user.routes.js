@@ -5,21 +5,43 @@ import {
   handlelogin,
   handleResendEmail,
   handleDetials,
-  handleGetUser
+  handleGetUser,
+  handleProfilePic,
+  handlecoverPic,
 } from "../controllers/user.controller.js";
-import { validate } from "../../middleware/validation/validationExcution.js";
 import {
-    detailsSchema,
+  validate,
+  validateSingleImage,
+} from "../../middleware/validation/validationExcution.js";
+import {
+  detailsSchema,
   registerSchema,
+  singleImageSchema,
   verification,
 } from "../../middleware/validation/validationSchema.js";
 import { auth } from "../../middleware/auth.js";
+import { multer4server } from "../../services/multer.js";
 const userRoutes = express.Router();
 
 userRoutes.post("/register", validate(registerSchema), handlRegister);
 userRoutes.post("/verified", validate(verification), handleVerification);
 userRoutes.post("/login", handlelogin);
 userRoutes.post("/resendEmail", handleResendEmail);
-userRoutes.post("/detials", auth,validate(detailsSchema), handleDetials);
+userRoutes.post("/detials", auth, validate(detailsSchema), handleDetials);
 userRoutes.get("/user/:id", auth, handleGetUser);
+userRoutes.post(
+  "/profilePic",
+  multer4server().array("profilePic"),
+  auth,
+  validateSingleImage(singleImageSchema),
+  handleProfilePic
+);
+userRoutes.post(
+  "/coverPic",
+  multer4server().array("coverPic"),
+  auth,
+  validateSingleImage(singleImageSchema),
+  handlecoverPic
+);
+
 export default userRoutes;

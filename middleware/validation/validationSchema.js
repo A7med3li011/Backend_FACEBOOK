@@ -19,3 +19,17 @@ export const verification = Joi.object({
   email: Joi.string().email().required(),
   code: Joi.string().required().min(5).max(5),
 });
+export const singleImageSchema = Joi.array()
+  .length(1)
+  .items(
+    Joi.object({
+      fieldname: Joi.string().required(),
+      originalname: Joi.string().required(),
+      encoding: Joi.string().required(),
+      mimetype: Joi.string().required(), // Restrict MIME types
+      filename: Joi.string().required(), // Restrict MIME types
+      destination: Joi.string().required(), // Restrict MIME types
+      path: Joi.string().required(), // Restrict MIME types
+      size: Joi.number().positive().required(), // Max size of 5MB
+    })
+  );

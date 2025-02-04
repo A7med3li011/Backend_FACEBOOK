@@ -1,6 +1,5 @@
 import { handleError } from "../../utilities/handleError.js";
 
-
 // export const normalValidation = (req, res, next) => {
 //   const { error } = registerSchema.validate(req.body, { abortEarly: false });
 
@@ -15,6 +14,14 @@ export const validate = (schema) => {
 
     if (error) return next(new handleError(error.message, 400));
 
+    next();
+  };
+};
+
+export const validateSingleImage = (schema) => {
+  return (req, res, next) => {
+    const { error } = schema.validate(req.files, { abortEarly: false });
+    if (error) return next(new handleError(error.message, 400));
     next();
   };
 };
