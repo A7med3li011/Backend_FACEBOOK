@@ -90,7 +90,6 @@ export const handleResendEmail = handleAsync(async (req, res, next) => {
 
 export const handleDetials = handleAsync(async (req, res, next) => {
   const { work, live, Studied, from } = req.body;
-  
 
   await userModel.findOneAndUpdate(
     { _id: req.user._id },
@@ -98,4 +97,16 @@ export const handleDetials = handleAsync(async (req, res, next) => {
   );
 
   res.status(200).json({ message: "updated successfully" });
+});
+
+export const handleGetUser = handleAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  const userExist = await userModel
+    .findById(id)
+    .select("-verified -verificationCode -password");
+
+  if (!userExist) return next(new handleError("user is not exsit", 404));
+
+  res.status(200).json({ message: "seccess", user: userExist });
 });

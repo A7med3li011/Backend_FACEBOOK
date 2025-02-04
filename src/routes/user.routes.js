@@ -5,6 +5,7 @@ import {
   handlelogin,
   handleResendEmail,
   handleDetials,
+  handleGetUser
 } from "../controllers/user.controller.js";
 import { validate } from "../../middleware/validation/validationExcution.js";
 import {
@@ -20,4 +21,5 @@ userRoutes.post("/verified", validate(verification), handleVerification);
 userRoutes.post("/login", handlelogin);
 userRoutes.post("/resendEmail", handleResendEmail);
 userRoutes.post("/detials", auth,validate(detailsSchema), handleDetials);
+userRoutes.get("/user/:id", auth, handleGetUser);
 export default userRoutes;
