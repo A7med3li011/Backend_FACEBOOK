@@ -6,7 +6,8 @@ import express from "express";
 import { connection } from "./db/connection.js";
 import { handleError } from "./utilities/handleError.js";
 import userRoutes from "./src/routes/user.routes.js";
-import { sender } from "./services/sendEmail.js";
+
+import postRouter from "./src/routes/post.routes.js";
 
 connection();
 const app = express();
@@ -15,6 +16,7 @@ app.use(express.json());
 
 
 app.use("/api/meta/facebook/user", userRoutes);
+app.use("/api/meta/facebook/user/post", postRouter);
 app.all("*", (req, res, next) => {
   next(new handleError(`invalid url ${req.originalUrl}`, 404));
 });
