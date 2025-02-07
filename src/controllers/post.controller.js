@@ -62,3 +62,9 @@ export const handleAddPost = handleAsync(async (req, res, next) => {
     }
   }
 });
+
+export const handleGetPost = handleAsync(async (req, res, next) => {
+  const posts = await postModel.find({ userId: req.user._id });
+
+  res.status(200).json({ message: "done", posts });
+});

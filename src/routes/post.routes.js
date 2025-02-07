@@ -1,5 +1,8 @@
 import express from "express";
-import { handleAddPost } from "../controllers/post.controller.js";
+import {
+  handleAddPost,
+  handleGetPost,
+} from "../controllers/post.controller.js";
 import { multer4server } from "../../services/multer.js";
 import { auth } from "../../middleware/auth.js";
 
@@ -10,6 +13,12 @@ postRouter.post(
   multer4server().single("midea"),
   auth,
   handleAddPost
+);
+postRouter.get(
+  "/getposts",
+
+  auth,
+  handleGetPost
 );
 
 export default postRouter;
