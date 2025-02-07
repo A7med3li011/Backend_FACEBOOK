@@ -22,6 +22,12 @@ export const handleAddPost = handleAsync(async (req, res, next) => {
       contentType: "text",
     });
 
+    const { _id } = post;
+
+    await userModel.updateOne(
+      { _id: req.user._id },
+      { $push: { posts: { _id } } }
+    );
     return res.status(201).json({ message: "post created sucessfully", post });
   }
 
@@ -40,7 +46,12 @@ export const handleAddPost = handleAsync(async (req, res, next) => {
         content: { public_id, secure_url },
         contentType: "vedio",
       });
+      const { _id } = post;
 
+      await userModel.updateOne(
+        { _id: req.user._id },
+        { $push: { posts: { _id } } }
+      );
       return res.json({ message: "done", post }).status(201);
     }
 
@@ -57,8 +68,16 @@ export const handleAddPost = handleAsync(async (req, res, next) => {
         content: { public_id, secure_url },
         contentType: "image",
       });
+      const { _id } = post;
 
-      return res.json({ message: "done", post }).status(201);
+      await userModel.updateOne(
+        { _id: req.user._id },
+        { $push: { posts: { _id } } }
+      );
+
+      return res
+        .json({ message: "post created sucessfully", post })
+        .status(201);
     }
   }
 });
@@ -66,5 +85,5 @@ export const handleAddPost = handleAsync(async (req, res, next) => {
 export const handleGetPost = handleAsync(async (req, res, next) => {
   const posts = await postModel.find({ userId: req.user._id });
 
-  res.status(200).json({ message: "done", posts });
+  res.status(200).json({ message: "post created sucessfully", posts });
 });

@@ -105,7 +105,7 @@ export const handleGetUser = handleAsync(async (req, res, next) => {
 
   const userExist = await userModel
     .findById(id)
-    .select("-verified -verificationCode -password");
+    .select("-verified -verificationCode -password").populate("posts");
 
   if (!userExist) return next(new handleError("user is not exsit", 404));
 
