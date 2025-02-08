@@ -92,6 +92,8 @@ export const handleLike = handleAsync(async (req, res, next) => {
   const { postId } = req.body;
   const post = await postModel.findById(postId);
 
+  if (!post) return next(new handleError("post is not Exist"));
+
   const updatedQuery = post.likes.includes(req.user._id)
     ? { $pull: { likes: req.user._id } }
     : { $push: { likes: req.user._id } };

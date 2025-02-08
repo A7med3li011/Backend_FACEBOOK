@@ -68,7 +68,9 @@ export const handlelogin = handleAsync(async (req, res, next) => {
 
   const user = await userModel
     .findOne({ email, verified: true })
-    .select("-verified -verificationCode -password");
+    .select(
+      "-live -Studied -from -birthOfDate -password -bio -profilePic -coverPic -friends -posts -verified -verificationCode -allImages"
+    );
   const token = jwt.sign({ user }, process.env.SECRETEKEY);
 
   res.json({ message: "done", data: token });
@@ -105,7 +107,8 @@ export const handleGetUser = handleAsync(async (req, res, next) => {
 
   const userExist = await userModel
     .findById(id)
-    .select("-verified -verificationCode -password").populate("posts");
+    .select("-verified -verificationCode -password")
+    .populate("posts");
 
   if (!userExist) return next(new handleError("user is not exsit", 404));
 
