@@ -83,9 +83,20 @@ export const handleAddPost = handleAsync(async (req, res, next) => {
 });
 
 export const handleGetPost = handleAsync(async (req, res, next) => {
-  const posts = await postModel.find({ userId: req.user._id });
+  const posts = await postModel
+    .find({ userId: req.user._id })
+    .populate({
+      path: "userId",
+      select: "profilePic name",
+    })
+    .populate({
+      path: "comments.user",
+      select: "profilePic name",
+    });
 
-  res.status(200).json({ message: "post created sucessfully", posts });
+  if (!posts.length) return next(new handleError("there is no posts yet", 404));
+
+  res.status(200).json({ message: "done", posts });
 });
 
 export const handleLike = handleAsync(async (req, res, next) => {
@@ -104,4 +115,22 @@ export const handleLike = handleAsync(async (req, res, next) => {
   );
 
   res.status(200).json({ message: "updatedSuccefully" });
+});
+
+export const handlecommet = handleAsync(async (req, res, next) => {
+  const { postId, text } = req.body;
+  const userExist = await userModel.findById(req.user._id);
+
+  if (!userExist) return next(new handleError("user not found", 404));
+
+  const postExist = await postModel.findById(postId);
+  if (!postExist) return next(new handleError("post  not found", 404));
+
+  const updatedPost = await postModel.findByIdAndUpdate(
+    { _id: postId },
+    { $push: { comments: { user: req.user._id, text } } },
+    { new: true }
+  );
+
+  res.json({ message: "done", updatedPost });
 });

@@ -3,6 +3,7 @@ import {
   handleAddPost,
   handleGetPost,
   handleLike,
+  handlecommet,
 } from "../controllers/post.controller.js";
 import { multer4server } from "../../services/multer.js";
 import { auth } from "../../middleware/auth.js";
@@ -22,5 +23,6 @@ postRouter.get(
   handleGetPost
 );
 postRouter.put("/like", auth, handleLike);
+postRouter.post("/comment", auth, handlecommet);
 
 export default postRouter;
