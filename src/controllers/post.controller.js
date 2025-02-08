@@ -87,3 +87,19 @@ export const handleGetPost = handleAsync(async (req, res, next) => {
 
   res.status(200).json({ message: "post created sucessfully", posts });
 });
+
+export const handleLike = handleAsync(async (req, res, next) => {
+  const { postId } = req.body;
+  const post = await postModel.findById(postId);
+
+  const updatedQuery = post.likes.includes(req.user._id)
+    ? { $pull: { likes: req.user._id } }
+    : { $push: { likes: req.user._id } };
+
+  const updatedPost = await postModel.findOneAndUpdate(
+    { _id: postId },
+    updatedQuery
+  );
+
+  res.status(200).json({ message: "updatedSuccefully" });
+});

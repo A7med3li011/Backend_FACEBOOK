@@ -2,6 +2,7 @@ import express from "express";
 import {
   handleAddPost,
   handleGetPost,
+  handleLike,
 } from "../controllers/post.controller.js";
 import { multer4server } from "../../services/multer.js";
 import { auth } from "../../middleware/auth.js";
@@ -20,5 +21,6 @@ postRouter.get(
   auth,
   handleGetPost
 );
+postRouter.put("/like", auth, handleLike);
 
 export default postRouter;
