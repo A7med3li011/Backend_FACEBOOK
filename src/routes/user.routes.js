@@ -44,6 +44,6 @@ userRoutes.post(
   validateSingleImage(singleImageSchema),
   handlecoverPic
 );
-userRoutes.get("/searchUser", handleSearchUser);
+userRoutes.post("/searchUser", handleSearchUser);
 
 export default userRoutes;
