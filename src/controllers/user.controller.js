@@ -161,3 +161,13 @@ export const handlecoverPic = handleAsync(async (req, res, next) => {
 
   res.status(200).json({ message: "done" });
 });
+
+export const handleSearchUser = handleAsync(async (req, res, next) => {
+  const { text } = req.body;
+
+  const users = await userModel
+    .find({ name: { $regex: text, $options: "i" } })
+    .select("profilePic name");
+
+  res.json({ message: "done", users });
+});

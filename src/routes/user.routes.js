@@ -8,6 +8,7 @@ import {
   handleGetUser,
   handleProfilePic,
   handlecoverPic,
+  handleSearchUser,
 } from "../controllers/user.controller.js";
 import {
   validate,
@@ -43,5 +44,6 @@ userRoutes.post(
   validateSingleImage(singleImageSchema),
   handlecoverPic
 );
+userRoutes.get("/searchUser", auth, handleSearchUser);
 
 export default userRoutes;
