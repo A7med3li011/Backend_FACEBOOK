@@ -134,3 +134,12 @@ export const handlecommet = handleAsync(async (req, res, next) => {
 
   res.json({ message: "done", updatedPost });
 });
+
+export const handleGetcommet = handleAsync(async (req, res, next) => {
+  const postId = req.body;
+  const postExist = await postModel.findById(postId).populate({
+    path: "comments.user",
+    select: "profilePic name",
+  });
+  if (!postExist) return next(new handleError("post not exist", 404));
+});
