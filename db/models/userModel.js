@@ -48,6 +48,18 @@ const userSchema = new Schema({
       ref: "User",
     },
   ],
+  recieveRequests: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+  sendRequests: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+    },
+  ],
 
   posts: [
     {

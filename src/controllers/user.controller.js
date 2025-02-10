@@ -108,8 +108,19 @@ export const handleGetUser = handleAsync(async (req, res, next) => {
   const userExist = await userModel
     .findById(id)
     .select("-verified -verificationCode -password")
-    .populate("posts");
-
+    .populate("posts")
+    .populate({
+      path: "recieveRequests",
+      select: "name profilePic",
+    })
+    .populate({
+      path: "sendRequests",
+      select: "name profilePic",
+    })
+    .populate({
+      path: "friends",
+      select: "name profilePic posts",
+    });
   if (!userExist) return next(new handleError("user is not exsit", 404));
 
   res.status(200).json({ message: "seccess", user: userExist });
@@ -170,4 +181,102 @@ export const handleSearchUser = handleAsync(async (req, res, next) => {
     .select("profilePic name");
 
   res.json({ message: "done", users });
+});
+
+export const handleSendFriendRequest = handleAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  if (id == req?.user?._id)
+    return next(new handleError("send request to your account", 409));
+  const senderExist = await userModel.findById(req.user._id);
+  if (!senderExist) return next(new handleError("sender not exist", 404));
+  const recieverExist = await userModel.findById(id);
+  if (!recieverExist) return next(new handleError("reciever not exist", 404));
+  if (
+    recieverExist.friends.includes(req.user._id) ||
+    senderExist.friends.includes(id)
+  )
+    return next(new handleError("you are already friends", 404));
+  await userModel.findByIdAndUpdate(
+    { _id: id },
+    { $push: { recieveRequests: req.user._id } }
+  );
+  await userModel.findByIdAndUpdate(
+    { _id: req.user._id },
+    { $push: { sendRequests: id } }
+  );
+
+  res.status(200).json({ message: "done" });
+});
+export const handleacceptRequest = handleAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const senderExist = await userModel.findById(req.user._id);
+  if (!senderExist) return next(new handleError("sender not exist", 404));
+  const recieverExist = await userModel.findById(id);
+  if (!recieverExist) return next(new handleError("reciever not exist", 404));
+
+  const updatedsenderExist = await userModel.findByIdAndUpdate(
+    { _id: req.user._id },
+    { $push: { friends: id }, $pull: { sendRequests: id } }
+  );
+  const updatedRecieverExist = await userModel.findByIdAndUpdate(
+    { _id: id },
+    {
+      $push: { friends: req.user._id },
+      $pull: { recieveRequests: req.user._id },
+    }
+  );
+
+  res.status(200).json({ message: "done " });
+});
+export const handleIgnoreRequest = handleAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const senderExist = await userModel.findById(req.user._id);
+  if (!senderExist) return next(new handleError("sender not exist", 404));
+  const recieverExist = await userModel.findById(id);
+  if (!recieverExist) return next(new handleError("reciever not exist", 404));
+
+  if (
+    recieverExist.friends.includes(req.user._id) ||
+    senderExist.friends.includes(id)
+  )
+    return next(new handleError("you are already friends", 409));
+  const updatedsenderExist = await userModel.findByIdAndUpdate(
+    { _id: req.user._id },
+    { $pull: { sendRequests: id } }
+  );
+  const updatedRecieverExist = await userModel.findByIdAndUpdate(
+    { _id: id },
+    {
+      $pull: { recieveRequests: req.user._id },
+    }
+  );
+
+  res.status(200).json({ message: "done " });
+});
+
+export const handleRemoveFreind = handleAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const senderExist = await userModel.findById(req.user._id);
+  if (!senderExist) return next(new handleError("sender not exist", 404));
+  const recieverExist = await userModel.findById(id);
+  if (!recieverExist) return next(new handleError("reciever not exist", 404));
+
+  if (
+    !recieverExist.friends.includes(req.user._id) ||
+    !senderExist.friends.includes(id)
+  )
+    return next(new handleError("you are already not friends", 409));
+  const updatedsenderExist = await userModel.findByIdAndUpdate(
+    { _id: req.user._id },
+    { $pull: { friends: id } }
+  );
+  const updatedRecieverExist = await userModel.findByIdAndUpdate(
+    { _id: id },
+    {
+      $pull: { friends: req.user._id },
+    }
+  );
+
+  res.status(200).json({ message: "done " });
 });

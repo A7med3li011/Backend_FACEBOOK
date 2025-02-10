@@ -9,6 +9,10 @@ import {
   handleProfilePic,
   handlecoverPic,
   handleSearchUser,
+  handleSendFriendRequest,
+  handleacceptRequest,
+  handleIgnoreRequest,
+  handleRemoveFreind,
 } from "../controllers/user.controller.js";
 import {
   validate,
@@ -45,5 +49,9 @@ userRoutes.post(
   handlecoverPic
 );
 userRoutes.post("/searchUser", handleSearchUser);
+userRoutes.post("/sendFriendRequest/:id", auth, handleSendFriendRequest);
+userRoutes.post("/ignoreRequst/:id", auth, handleIgnoreRequest);
+userRoutes.post("/acceptRequest/:id", auth, handleacceptRequest);
+userRoutes.post("/removeFriend/:id", auth, handleRemoveFreind);
 
 export default userRoutes;
