@@ -83,8 +83,10 @@ export const handleAddPost = handleAsync(async (req, res, next) => {
 });
 
 export const handleGetPost = handleAsync(async (req, res, next) => {
+  const { userId } = req.params;
   const posts = await postModel
-    .find({ userId: req.user._id })
+
+    .find({ userId})
     .populate({
       path: "userId",
       select: "profilePic name",

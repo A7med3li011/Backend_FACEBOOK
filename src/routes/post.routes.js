@@ -18,7 +18,7 @@ postRouter.post(
   handleAddPost
 );
 postRouter.get(
-  "/getposts",
+  "/getposts/:userId",
 
   auth,
   handleGetPost
