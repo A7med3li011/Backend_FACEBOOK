@@ -217,13 +217,18 @@ export const handleacceptRequest = handleAsync(async (req, res, next) => {
 
   const updatedsenderExist = await userModel.findByIdAndUpdate(
     { _id: req.user._id },
-    { $push: { friends: id }, $pull: { sendRequests: id } }
+    {
+      $push: { friends: id },
+      $pull: { sendRequests: id },
+      $pull: { recieveRequests: id },
+    }
   );
   const updatedRecieverExist = await userModel.findByIdAndUpdate(
     { _id: id },
     {
       $push: { friends: req.user._id },
       $pull: { recieveRequests: req.user._id },
+      $pull: { sendRequests: req.user._id },
     }
   );
 
