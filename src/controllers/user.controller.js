@@ -215,24 +215,19 @@ export const handleacceptRequest = handleAsync(async (req, res, next) => {
   const recieverExist = await userModel.findById(id);
   if (!recieverExist) return next(new handleError("reciever not exist", 404));
 
-  const updatedsenderExist = await userModel.findByIdAndUpdate(
-    { _id: req.user._id },
-    {
-      $push: { friends: id },
-      $pull: { sendRequests: id },
-      $pull: { recieveRequests: id },
-    }
-  );
-  const updatedRecieverExist = await userModel.findByIdAndUpdate(
-    { _id: id },
-    {
-      $push: { friends: req.user._id },
-      $pull: { recieveRequests: req.user._id },
-      $pull: { sendRequests: req.user._id },
-    }
-  );
+  
 
-  res.status(200).json({ message: "done " });
+  const qeury_reciever = {
+    $pull: { recieveRequests: req.user._id },
+    $push: { friends: req.user._id },
+  };
+
+  const querySender = { $pull: { sendRequests: id }, $push: { friends: id } };
+  await userModel.findByIdAndUpdate({ _id: id }, qeury_reciever);
+
+  await userModel.findByIdAndUpdate({ _id: req.user._id }, querySender);
+
+  res.status(200).json({ message: "doneee " });
 });
 export const handleIgnoreRequest = handleAsync(async (req, res, next) => {
   const { id } = req.params;
