@@ -251,6 +251,16 @@ export const handleIgnoreRequest = handleAsync(async (req, res, next) => {
       $pull: { recieveRequests: req.user._id },
     }
   );
+  const updatedsenderExist2 = await userModel.findByIdAndUpdate(
+    { _id: req.user._id },
+    { $pull: { recieveRequests: id } }
+  );
+  const updatedRecieverExist2 = await userModel.findByIdAndUpdate(
+    { _id: id },
+    {
+      $pull: { sendRequests: req.user._id },
+    }
+  );
 
   res.status(200).json({ message: "done " });
 });
