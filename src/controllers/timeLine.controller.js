@@ -12,6 +12,9 @@ export const handleGetTimeline = handleAsync(async (req, res, next) => {
   const posts = await postModel.find({ userId: { $in: ids } }).populate({
     path:"userId",
     select:"name profilePic"
-  });
+  }).populate({
+    path: "comments.user",
+    select: "profilePic name",
+  });;
   res.json({ message: "lolo", posts });
 });
