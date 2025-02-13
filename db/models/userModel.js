@@ -75,6 +75,13 @@ const userSchema = new Schema({
     type: String,
   },
   allImages: [{ secure_url: String, public_id: String }],
+
+  savedPosts: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
 });
 
 const userModel = model("User", userSchema);

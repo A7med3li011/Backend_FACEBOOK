@@ -86,7 +86,7 @@ export const handleGetPost = handleAsync(async (req, res, next) => {
   const { userId } = req.params;
   const posts = await postModel
 
-    .find({ userId})
+    .find({ userId })
     .populate({
       path: "userId",
       select: "profilePic name",
@@ -144,4 +144,48 @@ export const handleGetcommet = handleAsync(async (req, res, next) => {
     select: "profilePic name",
   });
   if (!postExist) return next(new handleError("post not exist", 404));
+});
+
+export const handleSavepost = handleAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  const postExsit = await postModel.findById(id);
+  if (!postExsit) return next(new handleError("post not exist", 404));
+
+  await userModel.findByIdAndUpdate(
+    { _id: req.user._id },
+    { $push: { savedPosts: id } }
+  );
+
+  res.json({ message: "saved successfully" });
+});
+
+export const handleDeletedPost = handleAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  const postExsit = await postModel.findById(id);
+  if (!postExsit) return next(new handleError("post not exist", 404));
+
+  if (postExsit.userId != req.user._id)
+    return next(new handleError("Unauthorized action", 401));
+
+  await postModel.findByIdAndDelete(id);
+
+  res.json({ message: "deleted successfully" });
+});
+
+export const getSavedPosts = handleAsync(async (req, res, next) => {
+  const userExist = await userModel
+    .findById(req.user._id)
+    .select("savedPosts -_id");
+  if (!userExist) return next(new handleError("user not found", 404));
+
+  let postsIds = [...JSON.parse(JSON.stringify(userExist.savedPosts))];
+
+  const savedPosts = await postModel.find({ _id: { $in: postsIds } }).populate({
+    path: "userId",
+    select:"name profilePic"
+  });
+
+  res.json({ message: "done", savedPosts });
 });
