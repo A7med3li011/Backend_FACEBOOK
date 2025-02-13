@@ -10,6 +10,7 @@ import userRoutes from "./src/routes/user.routes.js";
 
 import postRouter from "./src/routes/post.routes.js";
 import timeLineRoutes from "./src/routes/timeLine.routes.js";
+import storyRoutes from "./src/routes/story.routes.js";
 
 connection();
 const app = express();
@@ -21,6 +22,7 @@ app.use(express.urlencoded({ limit: "10mb", extended: true }));
 app.use("/api/meta/facebook/user", userRoutes);
 app.use("/api/meta/facebook/user/post", postRouter);
 app.use("/api/meta/facebook/user/timeline", timeLineRoutes);
+app.use("/api/meta/facebook/user/story", storyRoutes);
 app.all("*", (req, res, next) => {
   next(new handleError(`invalid url ${req.originalUrl}`, 404));
 });

@@ -69,7 +69,7 @@ export const handlelogin = handleAsync(async (req, res, next) => {
   const user = await userModel
     .findOne({ email, verified: true })
     .select(
-      "-live -Studied -from -birthOfDate -password -bio -profilePic -coverPic -friends -posts -verified -verificationCode -allImages"
+      "-live -Studied -from -birthOfDate -savedPosts  -password -bio -profilePic -coverPic -friends -posts -verified -verificationCode -allImages"
     );
   const token = jwt.sign({ user }, process.env.SECRETEKEY);
 
@@ -214,8 +214,6 @@ export const handleacceptRequest = handleAsync(async (req, res, next) => {
   if (!senderExist) return next(new handleError("sender not exist", 404));
   const recieverExist = await userModel.findById(id);
   if (!recieverExist) return next(new handleError("reciever not exist", 404));
-
-  
 
   const qeury_reciever = {
     $pull: { recieveRequests: req.user._id },

@@ -82,6 +82,7 @@ const userSchema = new Schema({
       ref: "Post",
     },
   ],
+ 
 });
 
 const userModel = model("User", userSchema);
