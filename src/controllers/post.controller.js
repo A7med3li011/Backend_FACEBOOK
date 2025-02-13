@@ -152,10 +152,12 @@ export const handleSavepost = handleAsync(async (req, res, next) => {
   const postExsit = await postModel.findById(id);
   if (!postExsit) return next(new handleError("post not exist", 404));
 
-  await userModel.findByIdAndUpdate(
-    { _id: req.user._id },
-    { $push: { savedPosts: id } }
-  );
+  const user = await userModel.findById(req.user._id);
+  const updatedQuery = user.savedPosts.includes(id)
+    ? { $pull: { savedPosts: id } }
+    : { $push: { savedPosts: id } };
+
+  await userModel.findByIdAndUpdate({ _id: req.user._id }, updatedQuery);
 
   res.json({ message: "saved successfully" });
 });
@@ -184,7 +186,7 @@ export const getSavedPosts = handleAsync(async (req, res, next) => {
 
   const savedPosts = await postModel.find({ _id: { $in: postsIds } }).populate({
     path: "userId",
-    select:"name profilePic"
+    select: "name profilePic",
   });
 
   res.json({ message: "done", savedPosts });
